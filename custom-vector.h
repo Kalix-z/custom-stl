@@ -1,8 +1,38 @@
 #pragma once
-#include <iostream>
 #include <stdint.h>
 
 namespace kstd {
+    template <typename type> class vector;
+    template<typename type> class vectorIter {
+        type* m_array;
+        size_t m_index;
+    public:
+        vectorIter(type* array, const size_t& index) {
+            m_array = array;
+            m_index = index;
+        }
+        bool operator!=(vectorIter<type> other) {
+            if (other.m_index == m_index)
+                return false;
+            return true;
+        }
+
+        vectorIter& operator++() {
+            m_index++;
+            return *this;
+        }
+
+        vectorIter operator++(int) {
+            m_index++;
+            return *this;
+        }
+
+        type operator*() {
+            return m_array[m_index];
+        }
+    };
+
+
 
     template <typename type> class vector {
     private:
@@ -10,6 +40,8 @@ namespace kstd {
         size_t m_maxSize;
         size_t m_curSize;
     public:
+
+        using const_iterator = vectorIter<type>;
         vector() {
             m_maxSize = 5;
             m_curSize = 0;
@@ -18,6 +50,14 @@ namespace kstd {
                 std::cout << "memory error\n";
                 return;
             }
+        }
+
+        vectorIter<type> begin() {
+            return vectorIter<type>(m_array, 0);
+        }
+
+        vectorIter<type> end() {
+            return  vectorIter<type>(m_array, m_curSize);
         }
 
         void push_back(type val) {   
